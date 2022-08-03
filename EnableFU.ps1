@@ -7,7 +7,9 @@ function GetAdmin {
         Exit
     }
 }
+
 $RootRegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+
 function Header {
     $Global:OSBuildNumber = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "CurrentBuildNumber").CurrentBuildNumber
     $Global:OSVersionNumber = $(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
@@ -21,11 +23,6 @@ function Header {
     Write-Output "-----------------------------------------------------------------"
     Write-Output "`n"
 }
-
-function CheckBuild {
-
-}
-
 
 function CheckRequirements {
     If ($OSVersionNumber -lt 1607 -and $OSVersionNumber -lt 14393) {

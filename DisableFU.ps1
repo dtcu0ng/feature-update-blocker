@@ -7,7 +7,9 @@ function GetAdmin {
         Exit
     }
 }
+
 $RootRegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+
 function Header {
     $Global:OSBuildNumber = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "CurrentBuildNumber").CurrentBuildNumber
     $Global:OSVersionNumber = $(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
@@ -21,11 +23,6 @@ function Header {
     Write-Output "-----------------------------------------------------------------"
     Write-Output "`n"
 }
-
-function CheckBuild {
-
-}
-
 
 function CheckRequirements {
     If ($OSVersionNumber -lt 1607 -and $OSVersionNumber -lt 14393) {
@@ -49,7 +46,6 @@ function Test-RegistryValue { # thanks: https://www.jonathanmedd.net/2014/02/tes
         return $false
     }
 }
-    
 
 function BlockFeatureUpdate {
 
@@ -76,7 +72,6 @@ function BlockFeatureUpdate {
         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows" -Name "WindowsUpdate"
         AddFUBlock
     }
-
     Write-Host "`nFeature Update blocked."
     Read-Host -Prompt "`nPress Enter to exit"
 }
@@ -84,7 +79,6 @@ function BlockFeatureUpdate {
 function Main {
     GetAdmin
     Header
-    CheckBuild
     CheckRequirements
 }
 
