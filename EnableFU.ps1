@@ -2,17 +2,17 @@
 
 function GetAdmin {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-        Write-Host "Administrators right not found, trying to restart the script with Administrators right. You may need to run this script as Administrators manually" -ForegroundColor Red
+        Write-Output "Administrators right not found, trying to restart the script with Administrators right. You may need to run this script as Administrators manually" -ForegroundColor Red
         Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
         Exit
     }
 }
 
 $RootRegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+$OSBuildNumber = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "CurrentBuildNumber").CurrentBuildNumber
+$OSVersionNumber = $(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
 
 function Header {
-    $Global:OSBuildNumber = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "CurrentBuildNumber").CurrentBuildNumber
-    $Global:OSVersionNumber = $(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
     Write-Output "-----------------------------------------------------------------"
     Write-Output "Feature Update Blocker - v22.8.3 (the enabler one)"
     Write-Output "https://github.com/dtcu0ng/feature-update-blocker"
@@ -26,8 +26,8 @@ function Header {
 
 function CheckRequirements {
     If ($OSVersionNumber -lt 1607 -and $OSVersionNumber -lt 14393) {
-        Write-Host "This script support Windows 10 version 1607 or later"
-        Write-Host "You have: $OSBuildNumber (version: $OSVersionNumber)"
+        Write-Output "This script support Windows 10 version 1607 or later"
+        Write-Output "You have: $OSBuildNumber (version: $OSVersionNumber)"
     } else {
         RemoveBlockFeatureUpdate
     }
@@ -42,7 +42,7 @@ function Test-RegistryValue { # thanks: https://www.jonathanmedd.net/2014/02/tes
     ) try {
         Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
         return $true
-    } catch { 
+    } catch {
         return $false
     }
 }
@@ -62,12 +62,12 @@ function RemoveBlockFeatureUpdate {
     If (Test-Path -Path "$RootRegPath") {
         RemoveFUBlockRegs
     } Else {
-        Write-Host "$RootRegPath not exist. This mean the blocker was not run before"
+        Write-Output "$RootRegPath not exist. This mean the blocker was not run before"
         Read-Host -Prompt "`nPress Enter to exit"
         Exit
     }
 
-    Write-Host "`nFeature Update enabled."
+    Write-Output "`nFeature Update enabled."
     Read-Host -Prompt "`nPress Enter to exit"
 }
 
