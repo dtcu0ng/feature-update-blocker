@@ -17,5 +17,5 @@ jobs:
       - name: Run ScriptAnalyzer
         run: |
           powershell -Command "& {Invoke-ScriptAnalyzer -Path '.\DisableFU.ps1' -EnableExit}"
-          powershell -Command "& {Invoke-ScriptAnalyzer -Path '.\DisableFU.ps1' -EnableExit}"
+          powershell -Command "& {Invoke-ScriptAnalyzer -Path '.\EnableFU.ps1' -EnableExit}"
 
