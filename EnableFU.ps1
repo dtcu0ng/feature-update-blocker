@@ -2,7 +2,7 @@
 
 function GetAdmin {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-        Write-Output "Administrators right not found, trying to restart the script with Administrators right. You may need to run this script as Administrators manually" -ForegroundColor Red
+        Write-Output "Administrators right not found, trying to restart the script with Administrators right. You may need to run this script as Administrators manually"
         Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
         Exit
     }
@@ -33,18 +33,9 @@ function CheckRequirements {
     }
 }
 
-function Test-RegistryValue { # thanks: https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
-    param (
-        [parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]$Path,
-        [parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]$Value
-    ) try {
-        Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
-        return $true
-    } catch {
-        return $false
-    }
+function Test-RegistryValue { # thanks: https://stackoverflow.com/questions/5648931/test-if-registry-value-exists
+    Param([String]$Path, [String]$Value)
+    return [bool]((Get-itemproperty -Path $Path).$Value)
 }
 
 function RemoveBlockFeatureUpdate {
@@ -52,10 +43,14 @@ function RemoveBlockFeatureUpdate {
     function RemoveFUBlockRegs {
         If ($(Test-RegistryValue -Path "$RootRegPath" -Value "TargetReleaseVersion") -eq "True") {
             Remove-ItemProperty -Path "$RootRegPath" -Name "TargetReleaseVersion"
+        } else {
+            Write-Output "TargetReleaseVersion not found. This mean the blocker was not run before"
         }
 
         If ($(Test-RegistryValue -Path "$RootRegPath" -Value "TargetReleaseVersionInfo") -eq "True") {
             Remove-ItemProperty -Path "$RootRegPath" -Name "TargetReleaseVersionInfo"
+        } else {
+            Write-Output "TargetReleaseVersionInfo not found. This mean the blocker was not run before"
         }
     }
     Write-Output "Starting patching the registry..."
@@ -66,7 +61,6 @@ function RemoveBlockFeatureUpdate {
         Read-Host -Prompt "`nPress Enter to exit"
         Exit
     }
-
     Write-Output "`nFeature Update enabled."
     Read-Host -Prompt "`nPress Enter to exit"
 }
@@ -74,7 +68,6 @@ function RemoveBlockFeatureUpdate {
 function Main {
     GetAdmin
     Header
-    CheckBuild
     CheckRequirements
 }
 

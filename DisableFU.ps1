@@ -2,15 +2,15 @@
 
 function GetAdmin {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-        Write-Output "Administrators right not found, trying to restart the script with Administrators right. You may need to run this script as Administrators manually" -ForegroundColor Red
+        Write-Output "Administrators right not found, trying to restart the script with Administrators right. You may need to run this script as Administrators manually"
         Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
         Exit
     }
 }
 
 $RootRegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
-$Global:OSBuildNumber = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "CurrentBuildNumber").CurrentBuildNumber
-$Global:OSVersionNumber = $(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
+$OSBuildNumber = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name "CurrentBuildNumber").CurrentBuildNumber
+$OSVersionNumber = $(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").ReleaseId
 
 function Header {
     Write-Output "-----------------------------------------------------------------"
@@ -33,18 +33,9 @@ function CheckRequirements {
     }
 }
 
-function Test-RegistryValue { # thanks: https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
-    param (
-        [parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]$Path,
-        [parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]$Value
-    ) try {
-        Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
-        return $true
-    } catch {
-        return $false
-    }
+function Test-RegistryValue { # thanks: https://stackoverflow.com/questions/5648931/test-if-registry-value-exists
+    Param([String]$Path, [String]$Value)
+    return [bool]((Get-itemproperty -Path $Path).$Value)
 }
 
 function BlockFeatureUpdate {
