@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  code-style:
+    name: Code style check
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Run ScriptAnalyzer
+        run:
+          powershell -Command "& {Invoke-ScriptAnalyzer -Path '.\DisableFU.ps1' -EnableExit}"
+          powershell -Command "& {Invoke-ScriptAnalyzer -Path '.\DisableFU.ps1' -EnableExit}"
+
