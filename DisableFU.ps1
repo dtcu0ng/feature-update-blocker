@@ -25,9 +25,10 @@ function Header {
 }
 
 function CheckRequirements {
-    If ($OSVersionNumber -lt 1607 -and $OSVersionNumber -lt 14393) {
-        Write-Output "This script support Windows 10 version 1607 or later"
+    If ($OSVersionNumber -lt 1803 -and $OSVersionNumber -lt 17134) {
+        Write-Output "This script support Windows 10 version 1803 or newer"
         Write-Output "You have: $OSBuildNumber (version: $OSVersionNumber)"
+        Read-Host -Prompt "`nPress Enter to exit"
     } else {
         BlockFeatureUpdate
     }

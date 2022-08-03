@@ -3,6 +3,11 @@ setlocal
 cd /d %~dp0
 :MAIN
 cls
+echo -----------------------------------------------------------------
+echo Feature Update Blocker - v22.8.3
+echo https://github.com/dtcu0ng/feature-update-blocker
+echo Made with "<3" by dtcu0ng
+echo -----------------------------------------------------------------
 echo Your choice:
 echo 1) Run disable Feature Update
 echo 2) Run enable Feature Update
