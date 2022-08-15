@@ -36,7 +36,7 @@ function CheckRequirements {
 
 function Test-RegistryValue { # thanks: https://stackoverflow.com/questions/5648931/test-if-registry-value-exists
     Param([String]$Path, [String]$Value)
-    return [bool]((Get-itemproperty -Path $Path).$Value)
+    return [bool]((Get-ItemProperty -Path $Path).$Value)
 }
 
 function RemoveBlockFeatureUpdate {
